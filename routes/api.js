@@ -145,7 +145,7 @@ router.get('/search/:filters', function(req, res) {
        include_adult: 'false',
        sort_by: 'popularity.desc',
        language: 'fr-FR',
-       api_key: process.env.API_TOKEN },
+       api_key: process.env.API_KEY },
     body: '{}' };
 
   request(options, function (error, response, body) {
