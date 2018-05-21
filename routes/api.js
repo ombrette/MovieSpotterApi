@@ -131,7 +131,7 @@ router.get('/question/:filters', function(req, res) {
     });
 });
 
-router.get('/search/:filters', function(req, res) {
+router.get('/movies_genres/:filters', function(req, res) {
   var filters = JSON.parse(req.params.filters);
   var page_nb = getRndInteger(1,5);
   var options = { method: 'GET',
@@ -143,6 +143,26 @@ router.get('/search/:filters', function(req, res) {
        include_adult: 'false',
        sort_by: 'popularity.desc',
        language: 'fr-FR',
+       api_key: process.env.API_KEY },
+    body: '{}' };
+
+  request(options, function (error, response, body) {
+    if (error) throw new Error(error);
+    var movies = JSON.parse(body);
+    res.json({success: true, movies: movies.results});
+  });
+});
+
+router.post('/search', function(req, res) {
+  var keyword = req.body.keyword;
+
+  var options = { method: 'GET',
+    url: process.env.API_URL+'search/movie',
+    qs: 
+     { include_adult: 'false',
+       page: '1',
+       query: keyword,
+       language: 'fr-Fr',
        api_key: process.env.API_KEY },
     body: '{}' };
 
