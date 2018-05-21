@@ -133,14 +133,12 @@ router.get('/question/:filters', function(req, res) {
 
 router.get('/search/:filters', function(req, res) {
   var filters = JSON.parse(req.params.filters);
-
-  console.log(filters.genres);
-
+  var page_nb = getRndInteger(1,5);
   var options = { method: 'GET',
     url: process.env.API_URL+'discover/'+filters.type,
     qs: 
      { with_genres: filters.genres.toString(),
-       page: '1',
+       page: page_nb,
        include_video: 'false',
        include_adult: 'false',
        sort_by: 'popularity.desc',
@@ -152,6 +150,23 @@ router.get('/search/:filters', function(req, res) {
     if (error) throw new Error(error);
     var movies = JSON.parse(body);
     res.json({success: true, movies: movies.results});
+  });
+});
+
+router.get('/movie/:id', function(req, res) {
+  var movie_id = JSON.parse(req.params.id);
+
+  var options = { method: 'GET',
+  url: process.env.API_URL+'movie/'+movie_id,
+  qs: 
+   { language: 'fr-FR',
+     api_key: process.env.API_KEY },
+  body: '{}' };
+
+  request(options, function (error, response, body) {
+    if (error) throw new Error(error);
+    var movie = JSON.parse(body);
+    res.json({success: true, movie: movie});
   });
 });
 
@@ -167,5 +182,10 @@ getToken = function (headers) {
     return null;
   }
 };
+
+getRndInteger = function(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) ) + min;
+}
+
 
 module.exports = router;
